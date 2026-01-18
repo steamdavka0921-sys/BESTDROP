@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>BEST DROP - GLOBAL VERSION</title>
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+    
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
@@ -15,14 +16,15 @@
         .container { padding: 15px; max-width: 1000px; margin: auto; }
         .hidden { display: none !important; }
 
-        /* Header & Custom Balance */
+        /* Header & Balance UI */
         .header { background: var(--card); padding: 15px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
         .balance-box { display: flex; align-items: center; background: #000; border: 1px solid var(--primary); border-radius: 20px; padding: 2px 12px; cursor: pointer; transition: 0.2s; }
         .balance-box:hover { transform: scale(1.05); }
         .add-icon { color: white; font-size: 18px; border-right: 1px solid var(--primary); padding-right: 8px; font-weight: bold; }
         .balance-val { color: var(--primary); font-weight: 700; margin-left: 8px; }
+        .login-btn-top { background: var(--primary); color: #000; padding: 6px 15px; border-radius: 20px; font-weight: 700; cursor: pointer; border: none; font-size: 14px; text-transform: uppercase; }
 
-        /* Grid */
+        /* Grid Styles */
         .cat-title { color: var(--primary); font-size: 1.2rem; margin: 25px 0 10px 0; border-left: 4px solid var(--primary); padding-left: 10px; text-transform: uppercase; letter-spacing: 1px; }
         .items-grid { display: grid; gap: 12px; margin-bottom: 20px; grid-template-columns: repeat(2, 1fr); }
         @media (min-width: 769px) { .items-grid { grid-template-columns: repeat(4, 1fr); } }
@@ -35,14 +37,13 @@
         .item-card p { font-size: 13px; color: #ccc; margin: 5px 0; height: 32px; overflow: hidden; }
         .item-card b { color: var(--green); font-size: 15px; }
 
-        /* Deposit Modal & Styles */
+        /* Deposit Modal & Icons */
         .dep-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 20px; }
         .dep-card { background: #080a0e; border: 1px solid var(--border); border-radius: 12px; padding: 5px; text-align: center; cursor: pointer; transition: 0.3s; }
-        .dep-card:hover { border-color: var(--primary); }
+        .dep-card:hover { border-color: var(--primary); background: #12161d; }
         .dep-card img { width: 100%; border-radius: 8px; display: block; }
-        .qr-img { width: 180px; height: 180px; margin: 15px auto; display: block; border: 5px solid white; border-radius: 10px; }
 
-        /* Other UI components (Battle, Upgrade, Nav etc. remain identical) */
+        /* Upgrade Wheel */
         .upgrade-container { display: flex; flex-direction: column; align-items: center; gap: 20px; margin-top: 20px; }
         .upgrade-slots { display: flex; gap: 15px; width: 100%; justify-content: center; }
         .u-slot { width: 150px; height: 180px; background: rgba(255,255,255,0.03); border: 2px dashed #444; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: 0.3s; padding: 10px; text-align: center; }
@@ -53,22 +54,24 @@
         .wheel-progress { fill: none; stroke: var(--primary); stroke-width: 15; stroke-dasharray: 0 628; transition: stroke-dasharray 0.5s ease; stroke-linecap: round; }
         .wheel-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; }
         .chance-val { font-size: 32px; font-weight: 800; color: white; }
-        .roll-pointer { position: absolute; top: -5px; left: 50%; transform: translateX(-50%); width: 4px; height: 20px; background: white; z-index: 10; box-shadow: 0 0 10px var(--primary); }
+        .roll-pointer { position: absolute; top: -5px; left: 50%; transform: translateX(-50%); width: 4px; height: 20px; background: white; z-index: 10; }
 
+        /* Battle */
         .battle-arena { display: flex; flex-direction: column; gap: 20px; margin-top: 20px; }
         .battle-track-box { height: 120px; background: #080a0e; border: 1px solid var(--border); overflow: hidden; position: relative; border-radius: 8px; }
         .battle-track { display: flex; align-items: center; position: absolute; left: 0; height: 100%; transition: transform 4s cubic-bezier(0.1, 0, 0.1, 1); }
 
+        /* Navigation */
         .bottom-nav { position: fixed; bottom: 0; width: 100%; height: 75px; background: #1a1f29; display: flex; border-top: 1px solid var(--border); z-index: 1000; }
         .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #666; font-size: 11px; cursor: pointer; }
         .nav-item.active { color: var(--primary); }
 
+        /* General UI */
         .btn-main { background: var(--primary); color: #000; border: none; padding: 14px; border-radius: 10px; font-weight: 700; width: 100%; cursor: pointer; text-transform: uppercase; transition: 0.3s; }
         .btn-main:disabled { background: #333; color: #666; cursor: not-allowed; }
-        .btn-sell { background: var(--red); color: white; border: none; padding: 6px; border-radius: 5px; font-size: 10px; width: 100%; margin-top: 5px; cursor: pointer; }
-        
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.92); display: flex; align-items: center; justify-content: center; z-index: 2000; padding: 20px; }
-        .modal-content { background: var(--card); padding: 25px; border-radius: 20px; width: 100%; max-width: 450px; max-height: 80vh; overflow-y: auto; position: relative; }
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: flex; align-items: center; justify-content: center; z-index: 2000; padding: 20px; }
+        .modal-content { background: var(--card); padding: 25px; border-radius: 20px; width: 100%; max-width: 450px; max-height: 85vh; overflow-y: auto; position: relative; }
+        .qr-img { width: 180px; height: 180px; margin: 15px auto; display: block; border: 4px solid white; border-radius: 10px; }
     </style>
 </head>
 <body>
@@ -83,14 +86,12 @@
             <div class="event-banner" style="margin-bottom:20px; border-radius:12px; overflow:hidden;">
                 <img src="https://res.cloudinary.com/dpdsuhwa9/image/upload/v1768723791/aw3bvipgb83sryln5lan.png" style="width:100%">
             </div>
-            <div id="dynamic-content">Loading Cases...</div>
+            <div id="dynamic-content">Loading...</div>
         </div>
 
         <div id="battle-sec" class="hidden">
             <h3 class="cat-title">Case Battle (vs BOT)</h3>
-            <div id="battle-prep">
-                <div id="battle-case-grid" class="items-grid"></div>
-            </div>
+            <div id="battle-prep"><div id="battle-case-grid" class="items-grid"></div></div>
             <div id="battle-active" class="hidden">
                 <div class="battle-arena">
                     <div><p style="color:var(--blue)">YOU</p><div class="battle-track-box"><div id="p-track" class="battle-track"></div></div></div>
@@ -103,7 +104,7 @@
 
         <div id="exchange-sec" class="hidden">
             <h3 class="cat-title">Exchange Skins</h3>
-            <div class="exchange-summary">
+            <div style="background:var(--card); padding:20px; border-radius:15px; text-align:center; margin-bottom:20px;">
                 <p>Selected Value: $<span id="ex-total">0.00</span></p>
                 <button id="ex-confirm-btn" class="btn-main" style="margin-top:10px;" disabled onclick="processExchange()">Exchange Selected</button>
             </div>
@@ -145,35 +146,27 @@
 
     <div id="dep-modal" class="modal hidden">
         <div class="modal-content">
-            <h3 style="text-align:center">Deposit Funds</h3>
+            <h3 style="text-align:center">Deposit</h3>
             <div class="dep-grid">
-                <div class="dep-card" onclick="openDepType('skin')">
-                    <img src="https://res.cloudinary.com/dpdsuhwa9/image/upload/v1768745122/thdrqjraphe58ggfclsl.webp">
-                </div>
-                <div class="dep-card" onclick="openDepType('crypto')">
-                    <img src="https://res.cloudinary.com/dpdsuhwa9/image/upload/v1768745122/nxwoi2yquthgoqvegtwg.webp">
-                </div>
-                <div class="dep-card" onclick="window.open('https://secure.zen.com/e377d2bd-58d9-4872-bd31-5e72ecd093a3', '_blank')">
-                    <img src="https://res.cloudinary.com/dpdsuhwa9/image/upload/v1768745123/r1yrhrbfcfglmbnez7gz.webp">
-                </div>
+                <div class="dep-card" onclick="showDepStep('skin')"><img src="https://res.cloudinary.com/dpdsuhwa9/image/upload/v1768745122/thdrqjraphe58ggfclsl.webp"><p style="font-size:11px">Skins</p></div>
+                <div class="dep-card" onclick="showDepStep('crypto')"><img src="https://res.cloudinary.com/dpdsuhwa9/image/upload/v1768745122/nxwoi2yquthgoqvegtwg.webp"><p style="font-size:11px">Crypto</p></div>
+                <div class="dep-card" onclick="window.open('https://secure.zen.com/e377d2bd-58d9-4872-bd31-5e72ecd093a3', '_blank')"><img src="https://res.cloudinary.com/dpdsuhwa9/image/upload/v1768745123/r1yrhrbfcfglmbnez7gz.webp"><p style="font-size:11px">Visa</p></div>
             </div>
-
-            <div id="dep-skin-step" class="hidden" style="margin-top:20px;">
-                <input type="text" id="trade-url" placeholder="Enter Steam Trade URL" style="width:100%; padding:10px; margin-bottom:10px; border-radius:5px; border:1px solid #444; background:#000; color:#fff;">
-                <div id="steam-inv-grid" class="items-grid" style="max-height:200px; overflow-y:auto;"></div>
+            <div id="step-skin" class="hidden" style="margin-top:20px;">
+                <input type="text" id="trade-url" placeholder="Steam Trade URL" style="width:100%; padding:10px; margin-bottom:10px; background:#000; border:1px solid #444; color:#fff;">
+                <p style="font-size:12px; margin-bottom:10px; color:#888;">Click your skins to deposit:</p>
+                <div id="steam-inv" style="display:grid; grid-template-columns:repeat(3,1fr); gap:5px;"></div>
             </div>
-
-            <div id="dep-crypto-step" class="hidden" style="margin-top:20px; text-align:center;">
+            <div id="step-crypto" class="hidden" style="margin-top:20px; text-align:center;">
                 <p>Select Amount:</p>
-                <div style="display:flex; gap:10px; margin-bottom:15px;">
+                <div style="display:flex; gap:5px; margin:10px 0;">
                     <button class="btn-main" style="padding:5px;" onclick="showQR()">$10</button>
                     <button class="btn-main" style="padding:5px;" onclick="showQR()">$50</button>
                     <button class="btn-main" style="padding:5px;" onclick="showQR()">$100</button>
                 </div>
                 <img id="qr-code" class="qr-img hidden" src="https://res.cloudinary.com/dpdsuhwa9/image/upload/v1768745122/b0evigkffysos5ybf6zc.png">
             </div>
-
-            <button class="btn-main" style="background:#333; margin-top:15px;" onclick="closeModal('dep-modal')">Close</button>
+            <button class="btn-main" style="margin-top:20px; background:#333;" onclick="closeModal('dep-modal')">Close</button>
         </div>
     </div>
 
@@ -188,46 +181,33 @@
     <div id="sel-modal" class="modal hidden">
         <div class="modal-content">
             <h3 id="modal-title">Select Skin</h3>
-            <div id="modal-grid" class="items-grid" style="margin-top:15px;"></div>
-            <button class="btn-main" style="background:#333; margin-top:15px;" onclick="closeModal('sel-modal')">Close</button>
+            <div id="modal-grid" class="items-grid"></div>
+            <button class="btn-main" style="background:#333" onclick="closeModal('sel-modal')">Close</button>
         </div>
     </div>
 
     <script>
-        // --- FIREBASE CONFIG ---
-        const firebaseConfig = { 
-            apiKey: "AIzaSyA7jQ9vtZPmxhJQNYO6Ebrnhj2_QlklMTI", 
-            authDomain: "clean-5ae13.firebaseapp.com", 
-            projectId: "clean-5ae13", 
-            storageBucket: "clean-5ae13.firebasestorage.app", 
-            appId: "1:78759275410:web:caf4dae29260d3a5d52f4b" 
-        };
+        // --- FIREBASE ---
+        const firebaseConfig = { apiKey: "AIzaSyA7jQ9vtZPmxhJQNYO6Ebrnhj2_QlklMTI", authDomain: "clean-5ae13.firebaseapp.com", projectId: "clean-5ae13", storageBucket: "clean-5ae13.firebasestorage.app", appId: "1:78759275410:web:caf4dae29260d3a5d52f4b" };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
         let userData = { balance: 0.00, inventory: [] };
         let steamID = localStorage.getItem('steamID');
-        let allSkins = [];
-        let allCases = [];
-        let exchangeSelections = [];
-        let selectedUserSkin = null;
-        let selectedTargetSkin = null;
+        let allSkins = [], allCases = [], exchangeSelections = [];
+        let selectedUserSkin = null, selectedTargetSkin = null;
 
-        // --- AUTH & SYNC ---
+        // --- AUTH SYNC (REALTIME) ---
         async function syncUser() {
-            if (!steamID) {
-                renderGuestUI();
-                return;
-            }
-            const userRef = db.collection('users').doc(steamID);
-            const doc = await userRef.get();
-            if (!doc.exists()) {
-                await userRef.set({ balance: 0.00, inventory: [] });
-                userData = { balance: 0.00, inventory: [] };
-            } else {
-                userData = doc.data();
-            }
-            updateUI();
+            if (!steamID) { updateUI(); return; }
+            db.collection('users').doc(steamID).onSnapshot(doc => {
+                if (!doc.exists()) {
+                    db.collection('users').doc(steamID).set({ balance: 0.00, inventory: [] });
+                    userData = { balance: 0.00, inventory: [] };
+                } else { userData = doc.data(); }
+                updateUI();
+                renderInv();
+            });
         }
 
         function updateUI() {
@@ -235,102 +215,81 @@
             const pName = document.getElementById('p-name');
             const authButtons = document.getElementById('auth-buttons');
             if (steamID) {
-                headerAuth.innerHTML = `
-                    <div class="balance-box" onclick="openModal('dep-modal')">
-                        <div class="add-icon">+</div>
-                        <div class="balance-val">$${userData.balance.toFixed(2)}</div>
-                    </div>`;
-                pName.innerText = "Steam User: " + steamID.substring(0,8);
-                authButtons.innerHTML = `<button class="btn-main" style="background:var(--red); width:auto; padding:8px 20px;" onclick="logout()">Sign Out</button>`;
+                headerAuth.innerHTML = `<div class="balance-box" onclick="openModal('dep-modal')"><div class="add-icon">+</div><div class="balance-val">$${Number(userData.balance || 0).toFixed(2)}</div></div>`;
+                if(pName) pName.innerText = "Steam ID: " + steamID.substring(0,10);
+                if(authButtons) authButtons.innerHTML = `<button class="btn-main" style="background:var(--red); width:auto; padding:8px 20px;" onclick="logout()">Sign Out</button>`;
             } else {
                 headerAuth.innerHTML = `<button class="login-btn-top" onclick="login()">Sign In</button>`;
-                authButtons.innerHTML = `<button class="btn-main" onclick="login()">Sign In with Steam</button>`;
+                if(authButtons) authButtons.innerHTML = `<button class="btn-main" onclick="login()">Sign In with Steam</button>`;
             }
         }
 
         function login() { window.location.href = "https://steamcommunity.com/openid/login?" + new URLSearchParams({"openid.ns": "http://specs.openid.net/auth/2.0","openid.mode": "checkid_setup","openid.return_to": window.location.origin + "/.netlify/functions/verify","openid.realm": window.location.origin,"openid.identity": "http://specs.openid.net/auth/2.0/identifier_select","openid.claimed_id": "http://specs.openid.net/auth/2.0/identifier_select"}).toString(); }
         function logout() { localStorage.removeItem('steamID'); location.reload(); }
-        function renderGuestUI() { updateUI(); document.getElementById('dynamic-content').innerHTML = "<h3 style='text-align:center; padding:50px;'>Login to see cases</h3>"; }
 
-        // --- DEPOSIT UI LOGIC ---
-        function openDepType(type) {
-            document.getElementById('dep-skin-step').classList.add('hidden');
-            document.getElementById('dep-crypto-step').classList.add('hidden');
-            if(type === 'skin') {
-                document.getElementById('dep-skin-step').classList.remove('hidden');
-                document.getElementById('steam-inv-grid').innerHTML = "Loading your Steam skins...";
-                // Жишээ ачаалалт: Энд чиний API дуудагдана
-            } else if(type === 'crypto') {
-                document.getElementById('dep-crypto-step').classList.remove('hidden');
-            }
+        // --- DATA ---
+        async function loadData() {
+            syncUser();
+            const casesSnap = await db.collection('active_cases').get();
+            const catsSnap = await db.collection('categories').orderBy('order').get();
+            allCases = casesSnap.docs.map(doc => ({id: doc.id, ...doc.data()}));
+            allSkins = []; allCases.forEach(c => allSkins = [...allSkins, ...c.skins]);
+            
+            let homeHtml = '';
+            catsSnap.forEach(catDoc => {
+                const filtered = allCases.filter(c => c.categoryId === catDoc.id);
+                if (filtered.length) {
+                    homeHtml += `<div class="cat-title">${catDoc.data().name}</div><div class="items-grid">`;
+                    filtered.forEach(c => homeHtml += `<div class="item-card" onclick="alert('Case Coming Soon')"><img src="${c.bannerImg}"><p>${c.name}</p><b>$${c.price}</b></div>`);
+                    homeHtml += `</div>`;
+                }
+            });
+            document.getElementById('dynamic-content').innerHTML = homeHtml;
+            document.getElementById('battle-case-grid').innerHTML = allCases.map(c => `<div class="item-card" onclick="initBattle('${c.id}')"><img src="${c.bannerImg}"><p>${c.name}</p><b>$${c.price}</b></div>`).join('');
+        }
+
+        // --- DEPOSIT STEPS ---
+        function showDepStep(type) {
+            document.getElementById('step-skin').classList.add('hidden');
+            document.getElementById('step-crypto').classList.add('hidden');
+            if(type === 'skin') document.getElementById('step-skin').classList.remove('hidden');
+            if(type === 'crypto') document.getElementById('step-crypto').classList.remove('hidden');
         }
         function showQR() { document.getElementById('qr-code').classList.remove('hidden'); }
 
-        // --- DATA LOAD ---
-        async function loadData() {
-            syncUser();
-            try {
-                const casesSnap = await db.collection('active_cases').get();
-                const catsSnap = await db.collection('categories').orderBy('order').get();
-                allCases = casesSnap.docs.map(doc => ({id: doc.id, ...doc.data()}));
-                allSkins = []; allCases.forEach(c => allSkins = [...allSkins, ...c.skins]);
-                
-                let homeHtml = '';
-                catsSnap.forEach(catDoc => {
-                    const cat = catDoc.data();
-                    const filtered = allCases.filter(c => c.categoryId === catDoc.id);
-                    if (filtered.length > 0) {
-                        homeHtml += `<div class="cat-title">${cat.name}</div><div class="items-grid">`;
-                        filtered.forEach(c => { homeHtml += `<div class="item-card" onclick="alert('Coming Soon')"><img src="${c.bannerImg}"><p>${c.name}</p><b>$${c.price}</b></div>`; });
-                        homeHtml += `</div>`;
-                    }
-                });
-                document.getElementById('dynamic-content').innerHTML = homeHtml;
-                document.getElementById('battle-case-grid').innerHTML = allCases.map(c => `<div class="item-card" onclick="initBattle('${c.id}')"><img src="${c.bannerImg}"><p>${c.name}</p><b>$${c.price}</b></div>`).join('');
-            } catch (e) { console.log(e); }
-        }
-
-        // --- BATTLE LOGIC ---
+        // --- BATTLE ---
         let battleCase = null;
         function initBattle(id) {
-            if(!steamID) return alert("Sign in first!");
+            if(!steamID) return alert("Login first");
             battleCase = allCases.find(c => c.id === id);
-            if(userData.balance < battleCase.price) return alert("Insufficient balance!");
+            if(userData.balance < battleCase.price) return alert("Insufficient balance");
             document.getElementById('battle-prep').classList.add('hidden');
             document.getElementById('battle-active').classList.remove('hidden');
-            const setupTrack = (id) => {
-                document.getElementById(id).innerHTML = Array(60).fill().map(() => {
-                    const s = battleCase.skins[Math.floor(Math.random()*battleCase.skins.length)];
-                    return `<div style="min-width:100px; text-align:center;"><img src="${s.img_code}" width="60"></div>`;
-                }).join('');
+            const setup = (id) => {
+                document.getElementById(id).innerHTML = Array(60).fill().map(() => `<div style="min-width:100px; text-align:center;"><img src="${battleCase.skins[Math.floor(Math.random()*battleCase.skins.length)].img_code}" width="60"></div>`).join('');
             }
-            setupTrack('p-track'); setupTrack('b-track');
+            setup('p-track'); setup('b-track');
             document.getElementById('start-battle-btn').onclick = runBattle;
         }
-
         async function runBattle() {
-            let newBal = userData.balance - battleCase.price;
-            await db.collection('users').doc(steamID).update({ balance: newBal });
-            userData.balance = newBal; updateUI();
-            
             document.getElementById('start-battle-btn').disabled = true;
+            await db.collection('users').doc(steamID).update({ balance: userData.balance - battleCase.price });
             const pWin = battleCase.skins[Math.floor(Math.random()*battleCase.skins.length)];
             const bWin = battleCase.skins[Math.floor(Math.random()*battleCase.skins.length)];
             document.getElementById('p-track').children[45].innerHTML = `<img src="${pWin.img_code}" width="60">`;
             document.getElementById('b-track').children[45].innerHTML = `<img src="${bWin.img_code}" width="60">`;
             document.getElementById('p-track').style.transform = document.getElementById('b-track').style.transform = `translateX(-${(45*100)-150}px)`;
-            
             setTimeout(async () => {
                 if(parseFloat(pWin.winPrice) >= parseFloat(bWin.winPrice)) {
-                    alert(`WIN!`); 
+                    alert("YOU WIN BOTH!");
                     userData.inventory.push(pWin, bWin);
                     await db.collection('users').doc(steamID).update({ inventory: userData.inventory });
-                }
+                } else alert("BOT WON!");
                 location.reload();
             }, 4500);
         }
 
-        // --- EXCHANGE & UPGRADE HELPERS ---
+        // --- EXCHANGE ---
         function toggleEx(i) {
             if(exchangeSelections.includes(i)) exchangeSelections = exchangeSelections.filter(x => x !== i);
             else exchangeSelections.push(i);
@@ -340,60 +299,66 @@
             renderExchange();
         }
         function renderExchange() {
-            document.getElementById('ex-inv-grid').innerHTML = userData.inventory.map((s, i) => `<div class="item-card ${exchangeSelections.includes(i) ? 'selected' : ''}" onclick="toggleEx(${i})"><img src="${s.img_code}"><p>${s.name}</p><b>$${s.winPrice}</b></div>`).join('');
+            document.getElementById('ex-inv-grid').innerHTML = (userData.inventory || []).map((s, i) => `<div class="item-card ${exchangeSelections.includes(i)?'selected':''}" onclick="toggleEx(${i})"><img src="${s.img_code}"><p>${s.name}</p><b>$${s.winPrice}</b></div>`).join('');
         }
         async function processExchange() {
             const total = parseFloat(document.getElementById('ex-total').innerText);
             const target = allSkins.filter(s => s.winPrice <= total && s.winPrice > total*0.8).sort((a,b) => b.winPrice - a.winPrice)[0];
-            if(!target) return alert("No target found");
+            if(!target) return alert("No skin found");
             userData.inventory = userData.inventory.filter((_, i) => !exchangeSelections.includes(i));
             userData.inventory.push({...target, uid: Date.now()});
             await db.collection('users').doc(steamID).update({ inventory: userData.inventory });
             location.reload();
         }
 
+        // --- UPGRADE ---
         function openSelection(type) {
-            const grid = document.getElementById('modal-grid');
-            openModal('sel-modal'); grid.innerHTML = "";
-            if(type === 'user') {
-                userData.inventory.forEach((s, i) => grid.innerHTML += `<div class="item-card" onclick="selectSkin('user', ${i})"><img src="${s.img_code}"><p>${s.name}</p><b>$${s.winPrice}</b></div>`);
-            } else {
-                allSkins.sort((a,b) => a.winPrice - b.winPrice).forEach((s, i) => grid.innerHTML += `<div class="item-card" onclick="selectSkin('target', ${i})"><img src="${s.img_code}"><p>${s.name}</p><b>$${s.winPrice}</b></div>`);
-            }
+            openModal('sel-modal');
+            const grid = document.getElementById('modal-grid'); grid.innerHTML = "";
+            if(type === 'user') userData.inventory.forEach((s, i) => grid.innerHTML += `<div class="item-card" onclick="selectSkin('user', ${i})"><img src="${s.img_code}"><p>${s.name}</p><b>$${s.winPrice}</b></div>`);
+            else allSkins.sort((a,b)=>a.winPrice-b.winPrice).forEach((s, i) => grid.innerHTML += `<div class="item-card" onclick="selectSkin('target', ${i})"><img src="${s.img_code}"><p>${s.name}</p><b>$${s.winPrice}</b></div>`);
         }
         function selectSkin(type, idx) {
-            if(type === 'user') {
-                selectedUserSkin = userData.inventory[idx];
-                document.getElementById('user-slot').innerHTML = `<img src="${selectedUserSkin.img_code}"><p>$${selectedUserSkin.winPrice}</p>`;
-            } else {
-                selectedTargetSkin = allSkins[idx];
-                document.getElementById('target-slot').innerHTML = `<img src="${selectedTargetSkin.img_code}"><p>$${selectedTargetSkin.winPrice}</p>`;
-            }
+            if(type === 'user') { selectedUserSkin = userData.inventory[idx]; document.getElementById('user-slot').innerHTML = `<img src="${selectedUserSkin.img_code}"><p>$${selectedUserSkin.winPrice}</p>`; }
+            else { selectedTargetSkin = allSkins[idx]; document.getElementById('target-slot').innerHTML = `<img src="${selectedTargetSkin.img_code}"><p>$${selectedTargetSkin.winPrice}</p>`; }
             closeModal('sel-modal');
             if(selectedUserSkin && selectedTargetSkin) {
-                let chance = (selectedUserSkin.winPrice / selectedTargetSkin.winPrice) * 100;
-                if(chance > 100) chance = 100;
+                let chance = Math.min(100, (selectedUserSkin.winPrice / selectedTargetSkin.winPrice)*100);
                 document.getElementById('chance-display').innerText = chance.toFixed(1) + "%";
                 document.getElementById('wheel-progress').style.strokeDasharray = `${(chance/100)*628} 628`;
                 document.getElementById('upgrade-btn').disabled = false;
             }
         }
+        async function startUpgrade() {
+            document.getElementById('upgrade-btn').disabled = true;
+            const chance = (selectedUserSkin.winPrice / selectedTargetSkin.winPrice)*100;
+            const roll = Math.random()*100;
+            document.querySelector('.wheel-svg').style.transition = 'transform 3s cubic-bezier(0.1,0,0.1,1)';
+            document.querySelector('.wheel-svg').style.transform = `rotate(${1800 + Math.random()*360}deg)`;
+            setTimeout(async () => {
+                userData.inventory = userData.inventory.filter(s => s.uid !== selectedUserSkin.uid);
+                if(roll <= chance) { alert("SUCCESS!"); userData.inventory.push(selectedTargetSkin); } else alert("FAILED!");
+                await db.collection('users').doc(steamID).update({ inventory: userData.inventory });
+                location.reload();
+            }, 3200);
+        }
 
-        // --- GENERAL UI HELPERS ---
+        // --- HELPERS ---
         function showPage(id) {
-            ['home-sec', 'battle-sec', 'exchange-sec', 'up-sec', 'profile-sec'].forEach(s => document.getElementById(s).classList.add('hidden'));
-            document.getElementById(id + '-sec').classList.remove('hidden');
+            ['home-sec','battle-sec','exchange-sec','up-sec','profile-sec'].forEach(s => document.getElementById(s).classList.add('hidden'));
+            document.getElementById(id+'-sec').classList.remove('hidden');
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             if(id === 'profile') renderInv();
             if(id === 'exchange') renderExchange();
         }
-        function renderInv() {
-            document.getElementById('inv-list').innerHTML = userData.inventory.map((s, i) => `<div class="item-card"><img src="${s.img_code}"><p>${s.name}</p><b>$${s.winPrice}</b></div>`).join('');
+        function renderInv() { 
+            const grid = document.getElementById('inv-list');
+            if(grid) grid.innerHTML = (userData.inventory || []).map(s => `<div class="item-card"><img src="${s.img_code}"><p>${s.name}</p><b>$${s.winPrice}</b></div>`).join('');
         }
         function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
-        window.onload = function() {
+        window.onload = () => {
             const id = new URLSearchParams(window.location.search).get('steamid');
             if(id) { localStorage.setItem('steamID', id); window.history.replaceState({}, '', '/'); steamID = id; }
             loadData();
