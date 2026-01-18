@@ -1,0 +1,11 @@
+{
+  "name": "best-drop-cs2",
+  "version": "1.0.0",
+  "description": "CS2 Case Opening Site",
+  "main": "index.html",
+  "dependencies": {
+    "axios": "^1.6.2"
+  },
+  "author": "BestDrop",
+  "license": "MIT"
+}
