@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>BEST DROP - STEAM OPENID VERSION</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+    <style>
+        :root { --bg: #0b1016; --card: #1a2028; --primary: #ffb703; --border: #2d3436; --blue: #4b69ff; --red: #ff4b4b; --green: #2ecc71; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Rajdhani', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background: var(--bg); color: white; padding-bottom: 90px; overflow-x: hidden; }
+        .container { padding: 15px; max-width: 1000px; margin: auto; }
+        .hidden { display: none !important; }
+
+        /* Header */
+        .header { background: var(--card); padding: 15px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
+        .balance { background: #000; padding: 5px 12px; border-radius: 20px; border: 1px solid var(--primary); color: var(--primary); font-weight: 700; }
+        .login-btn-img { height: 35px; cursor: pointer; display: block; }
+
+        /* Grid */
+        .cat-title { color: var(--primary); font-size: 1.2rem; margin: 25px 0 10px 0; border-left: 4px solid var(--primary); padding-left: 10px; text-transform: uppercase; }
+        .items-grid { display: grid; gap: 12px; margin-bottom: 20px; grid-template-columns: repeat(2, 1fr); }
+        @media (min-width: 769px) { .items-grid { grid-template-columns: repeat(4, 1fr); } }
+
+        /* Card Styles */
+        .item-card { background: #12161d; padding: 10px; border-radius: 8px; border-bottom: 3px solid var(--blue); text-align: center; cursor: pointer; position: relative; }
+        .item-card img { width: 100%; height: auto; max-height: 110px; object-fit: contain; }
+        .item-card p { font-size: 13px; color: #ccc; margin: 5px 0; height: 32px; overflow: hidden; }
+        .item-card b { color: var(--primary); font-size: 15px; }
+        .info-btn { position: absolute; top: 6px; right: 6px; background: rgba(0,0,0,0.7); width: 22px; height: 22px; border-radius: 50%; font-size: 12px; line-height: 22px; color: var(--primary); border: 1px solid var(--primary); z-index: 10; }
+
+        /* Spinner (Case Opening) */
+        .spinner-viewport { width: 100%; height: 110px; background: #080a0e; border: 1px solid var(--border); overflow: hidden; position: relative; border-radius: 8px; }
+        .spinner-track { display: flex; align-items: center; position: absolute; left: 0; height: 100%; transition: transform 5s cubic-bezier(0.1, 0, 0.1, 1); }
+        .pointer { position: absolute; left: 50%; top: 0; width: 3px; height: 100%; background: var(--primary); z-index: 10; transform: translateX(-50%); }
+
+        /* Navigation */
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; height: 75px; background: #1a1f29; display: flex; border-top: 1px solid var(--border); z-index: 1000; }
+        .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #666; font-size: 11px; cursor: pointer; }
+        .nav-item.active { color: var(--primary); }
+
+        .btn-main { background: var(--primary); color: #000; border: none; padding: 14px; border-radius: 10px; font-weight: 700; width: 100%; cursor: pointer; text-transform: uppercase; }
+        .btn-sell { background: var(--red); color: white; border: none; padding: 6px; border-radius: 5px; font-size: 10px; width: 100%; margin-top: 5px; cursor: pointer; }
+
+        /* Modal */
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.92); display: flex; align-items: center; justify-content: center; z-index: 2000; padding: 20px; }
+        .modal-content { background: var(--card); padding: 25px; border-radius: 20px; width: 100%; max-width: 380px; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h2 onclick="location.reload()" style="cursor:pointer">BEST<span style="color:var(--primary)">DROP</span></h2>
+        <div id="header-auth">
+            </div>
+    </div>
+
+    <div class="container">
+        <div id="home-sec">
+            <div class="event-banner" style="margin-bottom:20px; border-radius:12px; overflow:hidden;">
+                <img src="https://res.cloudinary.com/dpdsuhwa9/image/upload/v1768723791/aw3bvipgb83sryln5lan.png" style="width:100%">
+            </div>
+            <div id="dynamic-content">Кэйсүүд ачаалж байна...</div>
+        </div>
+
+        <div id="view-sec" class="hidden">
+            <button onclick="showPage('home')" style="color:#888; background:none; border:none; margin-bottom:10px; cursor:pointer">← БУЦАХ</button>
+            <div class="spinner-viewport"><div class="pointer"></div><div id="track" class="spinner-track"></div></div>
+            <button id="open-btn" class="btn-main" style="margin-top:15px">НЭЭХ</button>
+            <div id="case-items" class="items-grid" style="margin-top:20px;"></div>
+        </div>
+
+        <div id="profile-sec" class="hidden">
+            <div id="profile-card" style="text-align:center; padding:20px; background:var(--card); border-radius:15px; border:1px solid var(--border);">
+                <h3 id="p-name">Нэвтрээгүй</h3>
+                <p id="p-id" style="color:#666; font-size:12px; margin-bottom:10px;"></p>
+                <div id="auth-buttons">
+                    <img src="https://community.cloudflare.steamstatic.com/public/images/signinthroughsteam/sits_01.png" onclick="loginWithSteam()" style="cursor:pointer">
+                </div>
+            </div>
+            <div class="cat-title">Миний Инвентарь</div>
+            <div id="inv-list" class="items-grid"></div>
+            <div class="cat-title">Steam CS2 Inventory</div>
+            <div id="steam-inv-grid" class="items-grid"></div>
+        </div>
+
+        <div id="up-sec" class="hidden"><h3 class="cat-title" style="text-align:center">Upgrade Coming Soon</h3></div>
+        <div id="battle-sec" class="hidden"><h3 class="cat-title" style="text-align:center">Battle Coming Soon</h3></div>
+    </div>
+
+    <nav class="bottom-nav">
+        <div class="nav-item active" onclick="showPage('home')">🏠<p>Нүүр</p></div>
+        <div class="nav-item" onclick="showPage('up')">⚡<p>Upgrade</p></div>
+        <div class="nav-item" onclick="showPage('battle')">⚔️<p>Battle</p></div>
+        <div class="nav-item" onclick="showPage('profile')">👤<p>Профайл</p></div>
+    </nav>
+
+    <div id="info-modal" class="modal hidden"><div class="modal-content"><h3 id="info-title"></h3><div id="info-body" style="margin:15px 0;"></div><button class="btn-main" onclick="closeModal('info-modal')">ХААХ</button></div></div>
+
+    <script>
+        // --- CONFIG ---
+        const firebaseConfig = { 
+            apiKey: "AIzaSyA7jQ9vtZPmxhJQNYO6Ebrnhj2_QlklMTI", 
+            authDomain: "clean-5ae13.firebaseapp.com", 
+            projectId: "clean-5ae13", 
+            storageBucket: "clean-5ae13.firebasestorage.app", 
+            appId: "1:78759275410:web:caf4dae29260d3a5d52f4b" 
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        let balance = 250.00;
+        let steamID = localStorage.getItem('steamID');
+        let currentSkins = [];
+
+        // --- STEAM OPENID LOGIN ---
+        function loginWithSteam() {
+            const rootUrl = window.location.origin;
+            const returnUrl = rootUrl + "/.netlify/functions/verify";
+            const params = {
+                "openid.ns": "http://specs.openid.net/auth/2.0",
+                "openid.mode": "checkid_setup",
+                "openid.return_to": returnUrl,
+                "openid.realm": rootUrl,
+                "openid.identity": "http://specs.openid.net/auth/2.0/identifier_select",
+                "openid.claimed_id": "http://specs.openid.net/auth/2.0/identifier_select"
+            };
+            const urlParams = new URLSearchParams(params).toString();
+            window.location.href = "https://steamcommunity.com/openid/login?" + urlParams;
+        }
+
+        function logout() {
+            localStorage.removeItem('steamID');
+            location.reload();
+        }
+
+        // --- UI UPDATES ---
+        function updateAuthUI() {
+            const headerAuth = document.getElementById('header-auth');
+            const pName = document.getElementById('p-name');
+            const pId = document.getElementById('p-id');
+            const authBtns = document.getElementById('auth-buttons');
+
+            if (steamID) {
+                headerAuth.innerHTML = `<div class="balance">$<span id="bal-val">${balance.toFixed(2)}</span></div>`;
+                pName.innerText = "Steam User";
+                pId.innerText = "ID: " + steamID;
+                authBtns.innerHTML = `
+                    <button class="btn-main" style="width:auto; padding:8px 20px; margin-right:5px; background:var(--green)" onclick="fetchSteamInventory()">Inventory Татах</button>
+                    <button class="btn-main" style="width:auto; padding:8px 20px; background:var(--red)" onclick="logout()">Гарах</button>`;
+            } else {
+                headerAuth.innerHTML = `<img src="https://community.cloudflare.steamstatic.com/public/images/signinthroughsteam/sits_01.png" class="login-btn-img" onclick="loginWithSteam()">`;
+                pName.innerText = "Нэвтрээгүй байна";
+                authBtns.innerHTML = `<img src="https://community.cloudflare.steamstatic.com/public/images/signinthroughsteam/sits_02.png" onclick="loginWithSteam()" style="cursor:pointer">`;
+            }
+        }
+
+        // --- FIREBASE DATA ---
+        async function loadHomeData() {
+            updateAuthUI();
+            const container = document.getElementById('dynamic-content');
+            try {
+                const catsSnap = await db.collection('categories').orderBy('order').get();
+                const casesSnap = await db.collection('active_cases').get();
+                
+                let cases = [];
+                casesSnap.forEach(doc => cases.push({id: doc.id, ...doc.data()}));
+                
+                let html = '';
+                catsSnap.forEach(catDoc => {
+                    const cat = catDoc.data();
+                    const filtered = cases.filter(c => c.categoryId === catDoc.id);
+                    if (filtered.length > 0) {
+                        html += `<div class="cat-title">${cat.name}</div><div class="items-grid">`;
+                        filtered.forEach(c => {
+                            html += `
+                                <div class="item-card" onclick="viewCase('${c.id}')">
+                                    <img src="${c.bannerImg}">
+                                    <p>${c.name}</p>
+                                    <b>$${parseFloat(c.price).toFixed(2)}</b>
+                                </div>`;
+                        });
+                        html += `</div>`;
+                    }
+                });
+                container.innerHTML = html || "Кэйс олдсонгүй.";
+            } catch (e) { container.innerHTML = "Алдаа: " + e.message; }
+        }
+
+        // --- CASE LOGIC ---
+        async function viewCase(id) {
+            showPage('view');
+            const doc = await db.collection('active_cases').doc(id).get();
+            const data = doc.data();
+            currentSkins = data.skins;
+
+            document.getElementById('open-btn').innerText = `НЭЭХ ($${data.price})`;
+            document.getElementById('open-btn').onclick = () => openCase(data.price);
+
+            document.getElementById('case-items').innerHTML = currentSkins.map(s => `
+                <div class="item-card">
+                    <img src="${s.img_code}"><p>${s.name}</p><b>$${s.winPrice}</b>
+                </div>`).join('');
+            
+            resetTrack();
+        }
+
+        function resetTrack() {
+            const track = document.getElementById('track');
+            track.style.transition = "none";
+            track.style.transform = "translateX(0)";
+            track.innerHTML = Array(60).fill().map(() => {
+                const s = currentSkins[Math.floor(Math.random() * currentSkins.length)];
+                return `<div style="min-width:100px; text-align:center;"><img src="${s.img_code}" style="width:75px;"></div>`;
+            }).join('');
+        }
+
+        function openCase(price) {
+            if (!steamID) return alert("Эхлээд Steam-ээр нэвтэрнэ үү!");
+            if (balance < price) return alert("Баланс хүрэлцэхгүй байна!");
+
+            balance -= price;
+            updateAuthUI();
+
+            const win = currentSkins[Math.floor(Math.random() * currentSkins.length)];
+            const track = document.getElementById('track');
+            track.children[45].innerHTML = `<img src="${win.img_code}" style="width:75px;">`;
+
+            setTimeout(() => {
+                track.style.transition = "transform 5s cubic-bezier(0.1, 0, 0.1, 1)";
+                track.style.transform = `translateX(-${(45 * 100) - 150}px)`;
+            }, 50);
+
+            setTimeout(() => {
+                alert("ТА ХОЖЛОО: " + win.name);
+                saveLocalItem(win);
+                showPage('home');
+            }, 5500);
+        }
+
+        // --- STEAM INVENTORY (NETLIFY FUNCTION) ---
+        async function fetchSteamInventory() {
+            const grid = document.getElementById('steam-inv-grid');
+            grid.innerHTML = "Ачаалж байна...";
+            try {
+                const res = await fetch('/api/getSteamInventory?steamID=' + steamID);
+                const items = await res.json();
+                grid.innerHTML = items.map(i => `
+                    <div class="item-card">
+                        <img src="${i.img}"><p>${i.name}</p>
+                        <button class="btn-main" style="padding:5px; font-size:10px; background:var(--green)">DEPOSIT</button>
+                    </div>`).join('');
+            } catch (e) { grid.innerHTML = "Инвентарь Private байна эсвэл алдаа гарлаа."; }
+        }
+
+        // --- LOCAL STORAGE INV ---
+        function saveLocalItem(item) {
+            let inv = JSON.parse(localStorage.getItem('inv') || '[]');
+            inv.push({...item, uid: Date.now()});
+            localStorage.setItem('inv', JSON.stringify(inv));
+        }
+
+        function renderLocalInv() {
+            const inv = JSON.parse(localStorage.getItem('inv') || '[]');
+            document.getElementById('inv-list').innerHTML = inv.map((s, i) => `
+                <div class="item-card">
+                    <img src="${s.img_code}"><p>${s.name}</p><b>$${s.winPrice}</b>
+                    <button class="btn-sell" onclick="sellItem(${i})">ЗАРАХ</button>
+                </div>`).join('') || "Хоосон";
+        }
+
+        function sellItem(index) {
+            let inv = JSON.parse(localStorage.getItem('inv') || '[]');
+            balance += parseFloat(inv[index].winPrice);
+            inv.splice(index, 1);
+            localStorage.setItem('inv', JSON.stringify(inv));
+            updateAuthUI();
+            renderLocalInv();
+        }
+
+        // --- NAV ---
+        function showPage(p) {
+            ['home-sec', 'view-sec', 'profile-sec', 'up-sec', 'battle-sec'].forEach(s => document.getElementById(s).classList.add('hidden'));
+            document.getElementById(p + '-sec').classList.remove('hidden');
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            if (p === 'profile') renderLocalInv();
+            if (p === 'home') loadHomeData();
+        }
+
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+        // --- ON LOAD CHECK ---
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const id = urlParams.get('steamid');
+            if (id) {
+                localStorage.setItem('steamID', id);
+                window.history.replaceState({}, document.title, "/");
+                steamID = id;
+            }
+            loadHomeData();
+        };
+    </script>
+</body>
+  </html>
