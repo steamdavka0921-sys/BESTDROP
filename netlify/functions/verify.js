@@ -1,24 +1,24 @@
 exports.handler = async (event) => {
-    const params = event.queryStringParameters;
-    // Steam-ээс ирсэн identity URL-г авах
-    const identity = params['openid.claimed_id'];
+    // Энэ функц нь ихэвчлэн админ талын хүсэлтийг Firestore-д баталгаажуулахад ашиглагдана
+    const headers = {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+    };
 
-    if (identity) {
-        // URL-ын төгсгөлөөс SteamID64-ийг салгах
-        const steamID = identity.split('/').pop();
+    try {
+        const body = JSON.parse(event.body);
+        // Verify logic here (e.g., checking with Steam API if trade completed)
         
-        // Буцаад үндсэн сайт руу SteamID-г дамжуулж шилжүүлэх
         return {
-            statusCode: 302,
-            headers: {
-                "Location": `/?steamid=${steamID}`,
-                "Cache-Control": "no-cache"
-            }
+            statusCode: 200,
+            headers,
+            body: JSON.stringify({ message: "Verification endpoint active", status: "ok" })
+        };
+    } catch (error) {
+        return {
+            statusCode: 400,
+            headers,
+            body: JSON.stringify({ error: "Invalid request" })
         };
     }
-
-    return {
-        statusCode: 400,
-        body: JSON.stringify({ error: "Steam Authentication Failed" })
-    };
 };
